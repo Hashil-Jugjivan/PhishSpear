@@ -2,8 +2,13 @@
 
 from flask import current_app
 from email.mime.text import MIMEText
+from datetime import datetime
 import smtplib
 import json
+import uuid
+import csv
+import os
+
 
 def load_templates():
     """Loads and parses the JSON file to return a list of templates."""
@@ -49,6 +54,31 @@ def send_phishing_email(recipient: str, template_id: str, tracking_url: str):
         server.sendmail(msg['From'], [msg['To']], msg.as_string()) # Send the email
 
     print(f"[+] Email sent to {recipient} using template {template_id}")
+
+def generate_uid():
+    """Generates a unique identifier for the user."""
+    return uuid.uuid4().hex[:10] # 10-character unique ID
+
+def log_interaction(user_id: str, email: str = None, password: str = None, action: str = "clicked"):
+  """
+  Logs user interactions with the phishing email, such as clicking a link or entering credentials.
+  """  
+
+  log_path = 'campaigns/logs/campaign_log.csv'
+  os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+  with open(log_path, mode='a', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow([
+        datetime.now().isoformat(),
+        user_id,
+        action,
+        email if email else "",
+        password if password else ""
+        ])
+
+    print(f"[+] Logged {action} for UID={user_id}")
+
 
 """
 Loads the correct template using its ID

@@ -2,12 +2,11 @@
   {
     "id": "cred_harvest",
     "subject": "Important: Action Required to Keep Your Account Active",
-    "body": "Dear user,<br><br>We noticed unusual activity in your account. Please <a href='{{tracking_link}}'>click here</a> to verify your credentials.<br><br>Security Team"
+    "body": "Dear user,<br><br>Please <a href='{{tracking_url}}'>click here</a> to verify your credentials.<br><br>Security Team"
   },
   {
     "id": "invoice_alert",
     "subject": "Invoice Overdue: Immediate Payment Required",
-    "body": "Hello,<br><br>Your invoice #12839 is overdue. <a href='{{tracking_link}}'>View Invoice</a> to avoid penalties.<br><br>Finance Department"
+    "body": "Hello,<br><br>Your invoice #12839 is overdue. <a href='{{tracking_url}}'>View Invoice</a> to avoid penalties.<br><br>Finance Department"
   }
 ]
-

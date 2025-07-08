@@ -17,3 +17,4 @@ app.run(debug=True) starts the Flask server on localhost:5000, and enables debug
 
 #/send_email?to=test@example.com
 # 2e19a05cd813a4484b5e81797ca8ded5
+
