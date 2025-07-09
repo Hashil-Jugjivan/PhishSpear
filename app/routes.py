@@ -9,8 +9,8 @@ import csv
 main = Blueprint('main', __name__)
 
 @main.route('/')
-def index():
-    return "PhishSpear Backend Running!"
+def home():
+    return render_template('landing.html')
 
 @main.route('/send_email')
 def send_email():
