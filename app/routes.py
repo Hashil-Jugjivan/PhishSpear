@@ -3,6 +3,7 @@
 from flask import Blueprint, request, render_template
 from app.utils import send_phishing_email, log_interaction, generate_uid
 from urllib.parse import quote, unquote
+from collections import defaultdict
 import csv
 
 main = Blueprint('main', __name__)
@@ -44,6 +45,45 @@ def phishing_login():
     log_interaction(uid, email=email, password=password, action="submitted")
 
     return "Thank you for verifying. You may close this tab."
+
+@main.route('/admin/report')
+def admin_report():
+   # Load uid_map.csv to get UID to target email mapping
+    uid_to_target = {}
+    try:
+        with open("campaigns/logs/uid_map.csv", newline='') as f:
+            for row in csv.reader(f):
+                if len(row) >= 2:
+                    uid_to_target[row[0]] = row[1]
+    except FileNotFoundError:
+        uid_to_target = {}
+
+    # Collect user data from campaign_log.csv
+    user_data = defaultdict(lambda: {"target": "", "clicked": False, "submitted_email": None, "submitted_password": None, "logs": []})
+
+    try:
+        with open("campaigns/logs/campaign_log.csv", newline='') as f:
+            for row in csv.reader(f):
+                if len(row) < 3:
+                    continue
+
+                timestamp, uid, action = row[:3]
+                email = row[3] if len(row) > 3 else ""
+                password = row[4] if len(row) > 4 else ""
+
+                user = user_data[uid]
+                user["target"] = uid_to_target.get(uid, "Unknown")
+                user["logs"].append((timestamp, action, email))
+
+                if action == "clicked":
+                    user["clicked"] = True
+                elif action == "submitted":
+                    user["submitted_email"] = email
+                    user["submitted_password"] = password
+    except FileNotFoundError:
+        pass
+
+    return render_template("report.html", user_data=user_data)
 
 """
 Defines the / route. When you visit http://localhost:5000, you will see this message.
