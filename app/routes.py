@@ -1,7 +1,7 @@
 """ Handle web routes for the application (URLs)"""
 
-from flask import Blueprint, request, render_template
-from app.utils import send_phishing_email, log_interaction, generate_uid
+from flask import Blueprint, request, render_template, redirect, url_for, flash
+from app.utils import send_phishing_email, log_interaction, generate_uid, load_templates
 from urllib.parse import quote, unquote
 from collections import defaultdict
 import csv
@@ -10,24 +10,32 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
-    return render_template('landing.html')
+    templates = load_templates()  # Load templates from JSON file
+    return render_template('landing.html', templates=templates)
 
-@main.route('/send_email')
+@main.route('/send_email', methods=['GET', 'POST'])
 def send_email():
-    to_email = request.args.get('to') # Get the recipient email from query parameters
-    if not to_email:
-        return "Please specify ?to=email@example.com", 400
+    if request.method == 'POST':
+        to_email = request.form.get('to')
+        template_id = request.form.get('template_id', 'office365_security')  # fallback
 
-    uid = generate_uid()  # Generate a unique ID for the user
+        if not to_email:
+            return "Please specify recipient email", 400
 
-    with open("campaigns/logs/uid_map.csv", "a", newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow([uid, to_email])
+        uid = generate_uid()
 
-    tracking_url = f"http://localhost:5000/login?uid={uid}"
-    send_phishing_email(to_email, 'cred_harvest', tracking_url)
+        with open("campaigns/logs/uid_map.csv", "a", newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([uid, to_email])
 
-    return f"Email sent to {to_email} with tracking link: {tracking_url}"
+        tracking_url = f"http://localhost:5000/login?uid={uid}"
+        send_phishing_email(to_email, template_id, tracking_url)
+
+        flash(f"Phishing email sent to {to_email} using template '{template_id}' ✅")
+        return redirect(url_for('main.home'))
+
+    # fallback for GET requests, if needed
+    return redirect(url_for('main.home'))
 
 @main.route('/login', methods=['GET', 'POST'])
 def phishing_login():

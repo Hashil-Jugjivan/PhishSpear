@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PhishSpear – Phishing Simulation Tool</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -53,21 +53,12 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/report">Report</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://github.com/Hashil-Jugjivan/PhishSpear" target="_blank">GitHub</a></li>
         <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/send_email?to=test@example.com">Launch Campaign</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/admin/report">Report</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="https://github.com/Hashil-Jugjivan/PhishSpear" target="_blank">GitHub</a>
-        </li>
-        <li class="nav-item">
-          <button class="btn btn-sm btn-outline-dark ms-2 align-middle" id="toggleDarkMode" title="Toggle dark mode">
-            <i class="bi bi-sun-fill align-middle"></i>
+          <button class="btn btn-sm btn-outline-dark ms-2" id="toggleDarkMode" title="Toggle dark mode">
+            <i class="bi bi-sun-fill"></i>
           </button>
         </li>
       </ul>
@@ -79,8 +70,26 @@
   <div class="hero text-center mb-5">
     <h1>PhishSpear</h1>
     <p class="lead">Simulate phishing attacks. Train users. Track responses. Strengthen your human firewall.</p>
-    <div class="d-flex justify-content-center flex-wrap">
-      <a href="/send_email?to=test@example.com" class="btn btn-light btn-custom">🚀 Launch Campaign</a>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+          {{ messages[0] }}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/send_email" method="post" class="d-flex justify-content-center flex-wrap gap-2">
+      <input type="email" name="to" placeholder="Recipient Email" class="form-control w-auto" required>
+      <select name="template_id" class="form-select w-auto" required>
+        {% for template in templates %}
+          <option value="{{ template.id }}">{{ template.subject }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-light btn-custom">🚀 Launch Campaign</button>
+    </form>
+
+    <div class="mt-3 d-flex justify-content-center flex-wrap gap-2">
       <a href="/admin/report" class="btn btn-outline-light btn-custom">📊 View Report</a>
       <a href="https://github.com/Hashil-Jugjivan/PhishSpear" target="_blank" class="btn btn-outline-light btn-custom">💻 GitHub</a>
     </div>
@@ -112,13 +121,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // Toggle dark mode
   const toggleBtn = document.getElementById("toggleDarkMode");
   toggleBtn.addEventListener("click", () => {
     const currentTheme = document.documentElement.getAttribute("data-bs-theme");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-bs-theme", newTheme);
-    toggleBtn.innerHTML = newTheme === "dark" ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+    toggleBtn.innerHTML = newTheme === "dark"
+      ? '<i class="bi bi-sun-fill"></i>'
+      : '<i class="bi bi-moon-fill"></i>';
   });
 </script>
 

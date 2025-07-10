@@ -9,12 +9,11 @@ import uuid
 import csv
 import os
 
-
 def load_templates():
     """Loads and parses the JSON file to return a list of templates."""
 
     try:
-        with open('campaigns/templates.json', 'r') as file:
+        with open('campaigns/templates.json', encoding = 'utf-8') as file:
             templates = json.load(file)
         return templates
     except FileNotFoundError:
