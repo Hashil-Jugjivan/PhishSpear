@@ -1,8 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from app import db
 import uuid
-
-db = SQLAlchemy()
 
 def generate_uid():
     return uuid.uuid4().hex[:16]

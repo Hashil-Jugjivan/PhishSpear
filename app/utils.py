@@ -32,6 +32,34 @@ def get_template_by_id(template_id: str):
 def send_phishing_email(recipient: str, template_id: str, tracking_url: str):
     """Sends a phishing email using the specified template and tracking URL"""
 
+    print("=== Email Configuration Debug ===")
+    print("Available config keys:", list(current_app.config.keys()))
+    
+    # Use .get() method instead of direct key access to avoid KeyError
+    smtp_server = current_app.config.get('SMTP_SERVER')
+    smtp_port = current_app.config.get('SMTP_PORT')
+    smtp_username = current_app.config.get('SMTP_USERNAME')
+    smtp_password = current_app.config.get('SMTP_PASSWORD')
+    default_sender = current_app.config.get('DEFAULT_SENDER')
+
+    print(f"SMTP_SERVER: {smtp_server}")
+    print(f"SMTP_PORT: {smtp_port}")
+    print(f"SMTP_USERNAME: {smtp_username}")
+    print(f"SMTP_PASSWORD: {'***' if smtp_password else 'NOT SET'}")
+    print(f"DEFAULT_SENDER: {default_sender}")
+
+    # Check if configuration is missing
+    if not smtp_server:
+        raise ValueError("SMTP_SERVER configuration is missing")
+    if not smtp_port:
+        raise ValueError("SMTP_PORT configuration is missing")
+    if not smtp_username:
+        raise ValueError("SMTP_USERNAME configuration is missing")
+    if not smtp_password:
+        raise ValueError("SMTP_PASSWORD configuration is missing")
+    if not default_sender:
+        raise ValueError("DEFAULT_SENDER configuration is missing")
+
     template = get_template_by_id(template_id)
     if not template:
         raise ValueError(f"Template with ID {template_id} not found.")
@@ -40,19 +68,18 @@ def send_phishing_email(recipient: str, template_id: str, tracking_url: str):
 
     msg = MIMEText(body, 'html')
     msg['Subject'] = template['subject']
-    print("Flask Config DEFAULT_SENDER:", current_app.config.get('DEFAULT_SENDER'))
-    msg['From'] = current_app.config['DEFAULT_SENDER']
-    print(f"DEBUG: msg['From'] = {msg['From']}")
-    print(f"DEBUG: config DEFAULT_SENDER = {current_app.config['DEFAULT_SENDER']}")
+    msg['From'] = default_sender
     msg['To'] = recipient
 
-    with smtplib.SMTP(current_app.config['SMTP_SERVER'], current_app.config['SMTP_PORT']) as server:
-        server.starttls() # Upgrade to secure connection
-        server.login(current_app.config['SMTP_USERNAME'], current_app.config['SMTP_PASSWORD']) # Log in to the SMTP server
-        print(f"Sending email from: {msg['From']} to: {msg['To']}")
-        server.sendmail(msg['From'], [msg['To']], msg.as_string()) # Send the email
-
-    print(f"[+] Email sent to {recipient} using template {template_id}")
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()  # Upgrade to secure connection
+            server.login(smtp_username, smtp_password)  # Log in to the SMTP server
+            server.sendmail(msg['From'], [msg['To']], msg.as_string())  # Send the email
+        print(f"[+] Email sent to {recipient} using template {template_id}")
+    except Exception as e:
+        current_app.logger.error(f"Error sending email to {recipient}: {e}")
+        print(f"[-] Error sending email to {recipient}: {e}")
 
 def generate_uid():
     """Generates a unique identifier for the user."""
@@ -77,13 +104,3 @@ def log_interaction(user_id: str, email: str = None, password: str = None, actio
         ])
 
     print(f"[+] Logged {action} for UID={user_id}")
-
-
-"""
-Loads the correct template using its ID
-Replaces {{tracking_link}} in the email body with the real URL
-Builds an HTML email message using MIMEText
-Connects to the SMTP server (e.g., Mailtrap or Gmail)
-Logs in and sends the email securely
-Prints a success message
-"""
