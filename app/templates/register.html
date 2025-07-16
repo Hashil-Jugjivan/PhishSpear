@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Campaign Report{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">📊 Phishing Campaign Report</h2>
+
+  {% if campaigns %}
+    <table class="table table-bordered table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>UID</th>
+          <th>Target</th>
+          <th>Template</th>
+          <th>Clicks</th>
+          <th>Submissions</th>
+          <th>Email</th>
+          <th>Password</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in campaigns %}
+        <tr>
+          <td>{{ c.uid }}</td>
+          <td>{{ c.target }}</td>
+          <td>{{ c.template }}</td>
+          <td>{{ c.clicks }}</td>
+          <td>{{ c.submissions }}</td>
+          <td>{{ c.submitted_email or "—" }}</td>
+          <td>{{ c.submitted_password or "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info">No campaigns to report yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

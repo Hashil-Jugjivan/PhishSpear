@@ -1,11 +1,24 @@
 """Entry point to start the Flask web application"""
 
-from app import create_app
+from flask import Flask
+from app.routes import main
+from app.models import db
+from app.auth import auth
 
-app = create_app()
+app = Flask(__name__)
+app.secret_key = 'your-secret-key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///phishspear.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-if __name__ == "__main__":
+db.init_app(app)
+app.register_blueprint(main)
+app.register_blueprint(auth)
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
+
 
 """
 This is the main Python file you run to start the application.

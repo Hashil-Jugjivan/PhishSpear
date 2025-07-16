@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - PhishSpear{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">📊 Campaign Dashboard</h2>
+
+  {% if campaigns %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Recipient</th>
+            <th>Template</th>
+            <th>Clicks</th>
+            <th>Submissions</th>
+            <th>Submitted Email</th>
+            <th>Submitted Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in campaigns %}
+          <tr>
+            <td>{{ c.recipient }}</td>
+            <td>{{ c.template }}</td>
+            <td>{{ c.clicks }}</td>
+            <td>{{ c.submissions }}</td>
+            <td>{{ c.submitted_email or "—" }}</td>
+            <td>{{ c.submitted_password or "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">You haven’t launched any campaigns yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

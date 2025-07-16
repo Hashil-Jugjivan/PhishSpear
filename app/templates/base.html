@@ -54,8 +54,16 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="/send_email?to=test@example.com">Launch Campaign</a></li>
-          <li class="nav-item"><a class="nav-link" href="/admin/report">Report</a></li>
+
+          {% if session.get('user_id') %}
+            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/report">Report</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+          {% endif %}
+
           <li class="nav-item"><a class="nav-link" href="https://github.com/Hashil-Jugjivan/PhishSpear" target="_blank">GitHub</a></li>
           <li class="nav-item">
             <button class="btn btn-sm btn-outline-light ms-2 align-middle" id="toggleDarkMode" title="Toggle dark mode">
@@ -68,10 +76,25 @@
   </nav>
 
   <div class="container">
+
+    <!-- ✅ Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main content -->
     {% block content %}{% endblock %}
+
     <footer>
       <hr>
-      <p>Made Hashil Jugjivan · <code>PhishSpear v1.0</code></p>
+      <p>Made by Hashil Jugjivan · <code>PhishSpear v1.0</code></p>
     </footer>
   </div>
 
@@ -86,6 +109,6 @@
         ? '<i class="bi bi-sun-fill"></i>'
         : '<i class="bi bi-moon-fill"></i>';
     });
-</script>
+  </script>
 </body>
 </html>
