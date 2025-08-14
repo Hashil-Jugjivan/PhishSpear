@@ -4,6 +4,7 @@ from flask_login import LoginManager
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+
  
 # Load environment variables FIRST, before anything else
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
@@ -41,6 +42,10 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
+
+    from .security import init_talisman
+    init_talisman(app)
+
     from .models import User  # Import User model
 
     
