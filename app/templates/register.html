@@ -1,39 +1,52 @@
 {% extends 'base.html' %}
-{% block title %}Campaign Report{% endblock %}
+{% block title %}Register - PhishSpear{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="mb-4">📊 Phishing Campaign Report</h2>
-
-  {% if campaigns %}
-    <table class="table table-bordered table-hover">
-      <thead class="table-light">
-        <tr>
-          <th>UID</th>
-          <th>Target</th>
-          <th>Template</th>
-          <th>Clicks</th>
-          <th>Submissions</th>
-          <th>Email</th>
-          <th>Password</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for c in campaigns %}
-        <tr>
-          <td>{{ c.uid }}</td>
-          <td>{{ c.target }}</td>
-          <td>{{ c.template }}</td>
-          <td>{{ c.clicks }}</td>
-          <td>{{ c.submissions }}</td>
-          <td>{{ c.submitted_email or "—" }}</td>
-          <td>{{ c.submitted_password or "—" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <div class="alert alert-info">No campaigns to report yet.</div>
-  {% endif %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">🔐 Create Account</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" 
+                     class="form-control" 
+                     id="email" 
+                     name="email" 
+                     placeholder="Enter your email"
+                     required>
+              <div class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" 
+                     class="form-control" 
+                     id="password" 
+                     name="password" 
+                     placeholder="Enter a secure password"
+                     minlength="6"
+                     required>
+              <div class="form-text">Password must be at least 6 characters long.</div>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-person-plus"></i> Create Account
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-center">
+          <small class="text-muted">
+            Already have an account? 
+            <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Login here</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
