@@ -16,9 +16,9 @@ def create_app():
     load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
     app = Flask(__name__)
 
-    print("=== OS ENVIRONMENT ===")
-    for k in ["SMTP_SERVER", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "DEFAULT_SENDER"]:
-        print(f"{k}: {os.environ.get(k)}")
+    # print("=== OS ENVIRONMENT ===")
+    # for k in ["SMTP_SERVER", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "DEFAULT_SENDER"]:
+    #     print(f"{k}: {os.environ.get(k)}")
     
     # Configure the app directly with environment variables
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default-secret-key')
@@ -30,12 +30,12 @@ def create_app():
     app.config['DEFAULT_SENDER'] = os.getenv('DEFAULT_SENDER', 'noreply@awareness.local')
     
     # Debug: Print configuration to verify it's loaded
-    print("=== Flask App Configuration ===")
-    print(f"SMTP_SERVER: {app.config.get('SMTP_SERVER')}")
-    print(f"SMTP_PORT: {app.config.get('SMTP_PORT')}")
-    print(f"SMTP_USERNAME: {app.config.get('SMTP_USERNAME')}")
-    print(f"SMTP_PASSWORD: {'***' if app.config.get('SMTP_PASSWORD') else 'NOT SET'}")
-    print(f"DEFAULT_SENDER: {app.config.get('DEFAULT_SENDER')}")
+    # print("=== Flask App Configuration ===")
+    # print(f"SMTP_SERVER: {app.config.get('SMTP_SERVER')}")
+    # print(f"SMTP_PORT: {app.config.get('SMTP_PORT')}")
+    # print(f"SMTP_USERNAME: {app.config.get('SMTP_USERNAME')}")
+    # print(f"SMTP_PASSWORD: {'***' if app.config.get('SMTP_PASSWORD') else 'NOT SET'}")
+    # print(f"DEFAULT_SENDER: {app.config.get('DEFAULT_SENDER')}")
     
     # Initialize extensions
     db.init_app(app)
